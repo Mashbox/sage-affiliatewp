@@ -1,0 +1,43 @@
+{
+  "name": "mashbox/sage-affiliatewp",
+  "type": "library",
+  "license": "MIT",
+  "description": "",
+  "homepage": "https://github.com/mashbox/sage-affiliatewp",
+  "authors": [
+    {
+      "name": "Michael Pazienza",
+      "email": "michael@mashbox.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Mashbox\\Sage\\AffiliateWP\\": "src/"
+    }
+  },
+  "require": {
+    "roots/acorn": "*"
+  },
+  "require-dev": {
+    "squizlabs/php_codesniffer": "~3.0"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "scripts": {
+    "test": [
+      "phpcs --ignore=vendor --extensions=php --standard=PSR2 ."
+    ]
+  },
+  "archive" : {
+    "exclude": [
+      ".gitignore"
+    ]
+  },
+  "extra": {
+    "acorn": {
+      "providers": [
+        "Mashbox\\Sage\\AffiliateWP\\AffiliateWPServiceProvider"
+      ]
+    }
+  }
+}
