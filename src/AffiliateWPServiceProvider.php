@@ -23,7 +23,7 @@ class AffiliateWPServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (defined('AFFILIATEWP_PLUGIN_URL')) {
+        if (class_exists( 'Affiliate_WP' )) {
             $this->bindFilters();
         }
 
@@ -33,11 +33,10 @@ class AffiliateWPServiceProvider extends ServiceProvider
     }
 
     public function bindFilters()
-    {
+    {        
         $affiliatewp = $this->app['affiliatewp'];
 
-        add_filter('locate_template', [$affiliatewp, 'template'], 10, 2);
-        add_filter('affwp_get_template_part', [$affiliatewp, 'template']);
-        add_filter('affwp_get_template', [$affiliatewp, 'template'], 1000);
+        add_filter('affwp_template_paths', [$affiliatewp, 'template_paths'], 10, 1);
+        add_filter('affwp_get_template_part', [$affiliatewp, 'template'], 10, 2);
     }
 }

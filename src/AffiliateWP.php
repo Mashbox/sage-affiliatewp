@@ -26,26 +26,35 @@ class AffiliateWP
     }
 
     /**
-     * Support blade templates for the main template include.
+     * Add the Sage storage to the list of paths.
      */
-    public function templateInclude(string $template): string
+    public function template_paths(array $template_paths): array
     {
-        if (!$this->isAffiliateWPTemplate($template)) {
-            return $template;
-        }
-        return $this->locateThemeTemplate($template) ?: $template;
+        // Add the compiled directory to the path
+        $template_paths[] = config('view.compiled');
+
+        return $template_paths;
     }
 
     /**
      * Filter a template path, taking into account theme templates and creating
      * blade loaders as needed.
      */
-    public function template(string $templates, string $slug, string $nameame = ''): string
+    public function template(array $templates, string $templateName): string
     {
         // Locate any matching template within the theme.
-        $themeTemplate = $this->locateThemeTemplate($templateName ?: $template);
+        $themeTemplate = $this->locateThemeTemplate($templateName);
+
         if (!$themeTemplate) {
-            return $template;
+            return $templates[0];
+        }
+
+        // Return filename for status screen
+        if (
+            is_admin() &&
+            !wp_doing_ajax()
+        ) {
+            return $themeTemplate;
         }
 
         // Include directly unless it's a blade file.
@@ -54,9 +63,9 @@ class AffiliateWP
         }
 
         // We have a template, create a loader file and return it's path.
-        return view(
+        return basename( view(
             $this->fileFinder->getPossibleViewNameFromPath(realpath($themeTemplate))
-        )->makeLoader();
+        )->makeLoader() );
     }
 
     /**
@@ -73,13 +82,12 @@ class AffiliateWP
     protected function relativeTemplatePath(string $template): string
     {
         $defaultPaths = [
-            // WooCommerce plugin templates
-            \WC_ABSPATH . 'templates/',
+            AFFILIATEWP_PLUGIN_DIR . 'templates',
         ];
 
         if (is_child_theme()) {
             // Parent theme templates in woocommerce/ subfolder.
-            $defaultPaths[] = get_template_directory() . '/' . WC()->template_path();
+            $defaultPaths[] = get_template_directory() . '/templates';
         }
 
         return str_replace(
@@ -95,7 +103,8 @@ class AffiliateWP
     protected function locateThemeTemplate(string $template): string
     {
         // Absolute plugin template path -> woocommerce/single-product.php
-        $themeTemplate = AFFILIATEWP_PLUGIN_DIR . 'templates' . $this->relativeTemplatePath($template);
+        $themeTemplate = 'affiliatewp/' . $this->relativeTemplatePath($template);
+
         // Return absolute theme template path.
         return locate_template($this->sageFinder->locate($themeTemplate));
     }
