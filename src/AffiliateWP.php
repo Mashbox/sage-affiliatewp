@@ -40,10 +40,14 @@ class AffiliateWP
      * Filter a template path, taking into account theme templates and creating
      * blade loaders as needed.
      */
-    public function template(array $templates, string $templateName): string
+    public function template(array $templates, string $slug, ?string $name): string
     {
+        if ( isset( $name ) ) {
+			$slug .= '-' . $name;
+		}
+
         // Locate any matching template within the theme.
-        $themeTemplate = $this->locateThemeTemplate($templateName);
+        $themeTemplate = $this->locateThemeTemplate($slug);
 
         if (!$themeTemplate) {
             return $templates[0];
