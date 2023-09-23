@@ -37,6 +37,6 @@ class AffiliateWPServiceProvider extends ServiceProvider
         $affiliatewp = $this->app['affiliatewp'];
 
         add_filter('affwp_template_paths', [$affiliatewp, 'template_paths'], 10, 1);
-        add_filter('affwp_get_template_part', [$affiliatewp, 'template'], 10, 2);
+        add_filter('affwp_get_template_part', [$affiliatewp, 'template'], 10, 3);
     }
 }
